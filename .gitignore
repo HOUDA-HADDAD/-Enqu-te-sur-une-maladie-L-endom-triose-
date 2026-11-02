@@ -1,0 +1,26 @@
+# Donnees telechargees (le pipeline les retelecharge)
+data/raw/*
+data/processed/*
+!data/raw/.gitkeep
+!data/processed/.gitkeep
+
+# Resultats et journaux generes
+results/*
+logs/*
+!results/.gitkeep
+!logs/.gitkeep
+
+# Fichiers temporaires
+*.tmp
+*.swp
+tmp/
+.pipeline_tmp/
+
+# Python
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# Archives et livrables
+*.zip
+*.tar.gz
