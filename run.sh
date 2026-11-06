@@ -92,12 +92,6 @@ trap 'on_error $LINENO' ERR
 trap cleanup EXIT
 trap 'echo "Interruption (Ctrl+C)" >&2; exit 130' INT
 trap 'echo "Signal TERM recu" >&2; exit 143' TERM
-# --- Resume provisoire ---------------------------------------------
-echo "Parametres :"
-echo "  donnees   : $DATA_DIR"
-echo "  resultats : $RESULTS_DIR"
-echo "  seuil log2FC : $LFC_THRESHOLD"
-echo "  seuil p      : $P_THRESHOLD"
 # --- Preparation ---------------------------------------------------
 mkdir -p "$DATA_DIR/raw" "$DATA_DIR/processed" "$RESULTS_DIR" "$LOG_DIR"
 rm -rf -- "$TMP_DIR"
