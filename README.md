@@ -11,38 +11,39 @@ Les données utilisées proviennent de la base **Gene Expression Omnibus (GEO)**
 - **Format initial :** XLSX
 - **Format traité :** TSV
 - **Dimensions de la matrice :** 48 702 lignes × 338 colonnes
-
 ## 2. Organisation du projet
-
-```text
+```
 projet_maladie_git/
 │
 ├── data/
-│   ├── raw/                 # Données originales téléchargées
-│   └── processed/           # Données converties et nettoyées
+│   ├── raw/                     # Données originales téléchargées
+│   └── processed/               # Données converties et nettoyées
 │
 ├── scripts/
-│   ├── 01_download.sh       # Téléchargement et validation des données
-│   ├── checksums.sh         # Vérification SHA-256
-│   ├── convert_data.sh     # Conversion XLSX vers TSV
-│   ├── process_data.sh     # Nettoyage des données
-│   ├── lib.sh               # Fonctions Shell réutilisables
-│   ├── 03_metadata.sh       # Extraction des métadonnées
-│   ├── 04_archive.sh        # Création d'archive
-│   ├── analyse.py           # Analyse Python
-│   └── visualisations.py   # Visualisations
+│   ├── 01_download.sh           # Téléchargement et validation
+│   ├── checksums.sh             # Vérification SHA-256
+│   ├── convert_data.sh          # Conversion XLSX vers TSV
+│   ├── process_data.sh          # Nettoyage des données
+│   ├── lib.sh                   # Fonctions Shell réutilisables
+│   ├── 03_metadata.sh           # Extraction des métadonnées
+│   ├── 04_archive.sh            # Création d'archive
+│   ├── set_permissions.sh       # Gestion des permissions
+│   ├── analyse.py               # Analyse des données
+│   └── visualisations.py        # Création des visualisations
 │
-├── results/                 # Résultats de l'analyse
-├── logs/                    # Journaux d'exécution
-├── cron/                    # Configuration de planification
-├── tests/                   # Tests automatisés
+├── tests/
+│   └── test_analyse.py          # Tests automatisés
+├── results/                     # Résultats de l'analyse
+├── logs/                        # Journaux d'exécution
+├── cron/
+│   └── pipeline.cron            # Configuration CRON
 │
-├── requirements.txt         # Dépendances Python
-├── checksums.sha256         # Sommes de contrôle
-├── M2_HANDOFF.md            # Transmission du travail M2
-└── README.md                # Documentation du projet
+├── requirements.txt             # Dépendances Python
+├── checksums.sha256             # Sommes de contrôle
+├── SOURCES.md                   # Sources des données
+├── M2_HANDOFF.md                # Transmission du travail M2
+└── README.md                    # Documentation du projet
 ```
-
 Les fichiers volumineux contenant les données ne sont pas versionnés dans Git. Ils sont générés localement pendant l'exécution des scripts.
 
 ## 3. Environnement et dépendances
