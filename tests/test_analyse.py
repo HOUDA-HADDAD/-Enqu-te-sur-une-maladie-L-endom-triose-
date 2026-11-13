@@ -29,5 +29,4 @@ def test_seuils_respectes():
        assert not genes_valides.empty, "Les seuils ne sont pas respectes."
 
 def test_graphiques_generes():
-    assert os.path.exists("results/boxplot.png" or os.path.exists("results/heatmap.png"), "Aucun graphique n'a ete genere."
-
+    assert os.path.exists("results/boxplot.png") or os.path.exists("results/heatmap.png"), "Aucun graphique genere."
