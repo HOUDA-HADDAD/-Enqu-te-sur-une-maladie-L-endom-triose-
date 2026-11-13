@@ -54,11 +54,11 @@ def main():
         'log2FC': log2fc, 'p_value': p_values, 'p_adj_BH': p_adj_full
     })
 
-    # حفظ كل النتائج (بدون فلترة) لكي نرى أفضل الجينات
+    # Sauvegarder tous les résultats (sans filtrage) afin d’identifier les gènes les plus intéressants
     os.makedirs(args.out, exist_ok=True)
     results.to_csv(os.path.join(args.out, 'all_results.csv'), index=False)
 
-    # تطبيق الفلترة
+    # Appliquer le filtrage
     mask = (results['log2FC'].abs() >= args.lfc) & (results['p_adj_BH'] < args.alpha)
     deg_results = results[mask].copy()
     deg_results.to_csv(os.path.join(args.out, 'deg.csv'), index=False)

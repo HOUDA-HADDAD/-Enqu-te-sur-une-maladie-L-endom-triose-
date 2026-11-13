@@ -1,10 +1,17 @@
-# Configuration CRON - Projet Endometriose
+# Tache planifiee : pipeline endometriose (GSE141549)
+# Format : minute heure jour_du_mois mois jour_de_la_semaine commande
+# Ci-dessous : chaque lundi a 02:00.
+#
+# Installation (attention : remplace tout le crontab de l'utilisateur) :
+#   1. Remplacer /home/meriem/projet_maladie_git par le chemin reel du depot
+#   2. Sauvegarder le crontab existant : crontab -l > ~/crontab_sauvegarde.txt 2>/dev/null || true
+#   3. crontab cron/pipeline.cron
+#   4. Vérifier avec : crontab -l
+# Sous WSL, le service doit etre demarre : sudo service cron start
+# Désinstallation : crontab -e (supprimer uniquement la ligne du pipeline)
+# Journal de la tache : logs/cron.log (le pipeline ecrit aussi logs/run_*.log)
+
 SHELL=/bin/bash
 PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
 
-# Activation après validation du pipeline complet par M1
-# Format :
-# minute heure jour mois jour_semaine commande
-
-# Exemple à adapter :
-# 0 2 * * 0 /home/meriem/projet_maladie_git/run.sh >> /home/meriem/projet_maladie_git/logs/cron.log 2>&1
+0 2 * * 1 cd /home/meriem/projet_maladie_git && source .venv/bin/activate && ./run.sh >> logs/cron.log 2>&1

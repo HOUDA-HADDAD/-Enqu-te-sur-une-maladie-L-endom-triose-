@@ -6,7 +6,7 @@ ARCHIVE="results_${DATE}.tar.gz"
 
 echo "[INFO] Création de l'archive $ARCHIVE..."
 
-# التأكد من وجود مجلد النتائج قبل ضغطه
+# Vérifier que le dossier des résultats existe avant l’archivage
 if [ -d "results" ]; then
     tar -czf "$ARCHIVE" results/
     echo "[INFO] Archive créée avec succès : $ARCHIVE"
