@@ -1,0 +1,10 @@
+# Configuration CRON - Projet Endometriose
+SHELL=/bin/bash
+PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+
+# Activation après validation du pipeline complet par M1
+# Format :
+# minute heure jour mois jour_semaine commande
+
+# Exemple à adapter :
+# 0 2 * * 0 /home/meriem/projet_maladie_git/run.sh >> /home/meriem/projet_maladie_git/logs/cron.log 2>&1
