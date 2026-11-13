@@ -5,8 +5,6 @@ DATE=$(date +%Y%m%d_%H%M)
 ARCHIVE="results_${DATE}.tar.gz"
 
 echo "[INFO] Création de l'archive $ARCHIVE..."
-
-# التأكد من وجود مجلد النتائج قبل ضغطه
 if [ -d "results" ]; then
     tar -czf "$ARCHIVE" results/
     echo "[INFO] Archive créée avec succès : $ARCHIVE"
