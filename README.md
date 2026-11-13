@@ -80,19 +80,25 @@ Environnement de développement : **Ubuntu sous WSL2**.
 
 Les dépendances Python sont regroupées dans `requirements.txt`.
 
+
 ### Installation
 
-Depuis la racine du dépôt : 
+**Dépôt GitHub :** [Projet Endométriose](https://github.com/HOUDA-HADDAD/-Enqu-te-sur-une-maladie-L-endom-triose-.git)
 
-- Dépôt GitHub : [Projet Endométriose](https://github.com/HOUDA-HADDAD/-Enqu-te-sur-une-maladie-L-endom-triose-.git)
-- Pour récupérer le projet :
-  `git clone https://github.com/HOUDA-HADDAD/-Enqu-te-sur-une-maladie-L-endom-triose-.git`
+#### 1. Récupération du projet
+
+```bash
+git clone https://github.com/HOUDA-HADDAD/-Enqu-te-sur-une-maladie-L-endom-triose-.git
+cd NOM_DU_DOSSIER
+```
+
+#### 2. Création de l'environnement virtuel et installation des dépendances
+
 ```bash
 python3 -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
 ```
-
 **Important :** l'environnement virtuel `.venv` doit être activé avant l'exécution de `run.sh`.
 
 ## 4. Exécution du pipeline
