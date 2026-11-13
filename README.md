@@ -82,8 +82,11 @@ Les dépendances Python sont regroupées dans `requirements.txt`.
 
 ### Installation
 
-Depuis la racine du dépôt :
+Depuis la racine du dépôt : 
 
+- Dépôt GitHub : [Projet Endométriose](https://github.com/HOUDA-HADDAD/-Enqu-te-sur-une-maladie-L-endom-triose-.git)
+- Pour récupérer le projet :
+  `git clone https://github.com/HOUDA-HADDAD/-Enqu-te-sur-une-maladie-L-endom-triose-.git`
 ```bash
 python3 -m venv .venv
 source .venv/bin/activate
@@ -231,9 +234,12 @@ Il n'est pas appelé automatiquement par `run.sh`.
 
 ## 9. Remarques
 
-- Exécuter les commandes depuis la racine du dépôt.
-- Activer l'environnement virtuel Python avant de lancer `run.sh`.
-- Ne pas ajouter les données volumineuses au dépôt Git.
-- Conserver `requirements.txt` pour reproduire l'environnement Python.
-- Consulter `SOURCES.md` pour les références et les liens de téléchargement.
-- Le pipeline complet est lancé à partir du script principal `run.sh`.
+1- Exécuter les commandes depuis la racine du dépôt :
+   Dépôt GitHub : [Projet Endométriose](https://github.com/HOUDA-HADDAD/-Enqu-te-sur-une-maladie-L-endom-triose-.git)
+   Pour récupérer le projet :
+  `git clone https://github.com/HOUDA-HADDAD/-Enqu-te-sur-une-maladie-L-endom-triose-.git`
+2- Activer l'environnement virtuel Python avant de lancer `run.sh`.
+3- Ne pas ajouter les données volumineuses au dépôt Git.
+4- Conserver `requirements.txt` pour reproduire l'environnement Python.
+5- Consulter `SOURCES.md` pour les références et les liens de téléchargement.
+6- Le pipeline complet est lancé à partir du script principal `run.sh`.
