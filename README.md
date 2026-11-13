@@ -1,21 +1,69 @@
-# Projet « Enquête sur une maladie » — Endométriose (GEO GSE141549)
+# Projet Endométriose — Analyse de données GEO GSE141549
 
-**Question :** quels gènes s'expriment différemment entre les lésions d'endométriose
-(lésions + endométriomes) et l'endomètre non atteint ?
+## 1. Présentation du projet
 
-**Motif :** |log2FC| ≥ 1 **et** p-value ajustée (Benjamini-Hochberg) < 0,05.
+Ce projet porte sur l'analyse de données d'expression génique liées à l'endométriose.
 
-**Données :** GEO GSE141549, puce Illumina HumanWG-6 v2.0 (GPL13376), 48 701 sondes × 336 échantillons.
-Détails et adresses de téléchargement : voir `SOURCES.md`.
+Les données utilisées proviennent de la base **Gene Expression Omnibus (GEO)** du NCBI.
 
----
+- **Identifiant GEO :** GSE141549
+- **Fichier source :** `GSE141549_Illumina_HumanWG-6_v2.0_expression_beadchip_normalized.xlsx`
+- **Format initial :** XLSX
+- **Format traité :** TSV
+- **Dimensions de la matrice :** 48 702 lignes × 338 colonnes
+## 2. Organisation du projet
+```
+projet_maladie_git/
+│
+├── data/
+│   ├── raw/                     # Données originales téléchargées
+│   └── processed/               # Données converties et nettoyées
+│
+├── scripts/
+│   ├── 01_download.sh           # Téléchargement et validation
+│   ├── checksums.sh             # Vérification SHA-256
+│   ├── convert_data.sh          # Conversion XLSX vers TSV
+│   ├── process_data.sh          # Nettoyage des données
+│   ├── lib.sh                   # Fonctions Shell réutilisables
+│   ├── 03_metadata.sh           # Extraction des métadonnées
+│   ├── 04_archive.sh            # Création d'archive
+│   ├── set_permissions.sh       # Gestion des permissions
+│   ├── analyse.py               # Analyse des données
+│   └── visualisations.py        # Création des visualisations
+│
+├── tests/
+│   └── test_analyse.py          # Tests automatisés
+├── results/                     # Résultats de l'analyse
+├── logs/                        # Journaux d'exécution
+├── cron/
+│   └── pipeline.cron            # Configuration CRON
+│
+├── requirements.txt             # Dépendances Python
+├── checksums.sha256             # Sommes de contrôle
+├── SOURCES.md                   # Sources des données
+├── M2_HANDOFF.md                # Transmission du travail M2
+└── README.md                    # Documentation du projet
+```
+Les fichiers volumineux contenant les données ne sont pas versionnés dans Git. Ils sont générés localement pendant l'exécution des scripts.
 
-## 1. Installation
+## 3. Environnement et dépendances
 
-Prérequis : Linux ou WSL (Ubuntu), `bash`, `python3` (avec le module `venv`), `curl`, `gzip`,
-`sha256sum`, `awk`, `sed`, `tar`. Une connexion internet est nécessaire pour télécharger les données (~207 Mo).
+Environnement de développement : Ubuntu sous WSL2.
 
-Depuis la racine du dépôt :
+Prérequis :
+- Bash
+- Python 3
+- `curl`
+- `sha256sum`
+- `awk`
+- `sed`
+- `tar`
+
+Les dépendances Python sont regroupées dans `requirements.txt`.
+
+### Installation
+
+Depuis la racine du projet :
 
 ```bash
 python3 -m venv .venv
@@ -23,133 +71,73 @@ source .venv/bin/activate
 pip install -r requirements.txt
 ```
 
-> Le venv doit être **activé** avant de lancer `run.sh` : le script vérifie que les modules
-> Python (openpyxl, pandas, scipy, statsmodels, matplotlib, seaborn, pytest) sont disponibles.
+## 4. Préparation et traitement des données
 
-## 2. Mode d'emploi
+Les scripts M2 doivent être exécutés dans l'ordre suivant :
 
-Un seul point d'entrée : `run.sh`. Il exécute tout le pipeline, de la donnée brute aux résultats.
-
-```bash
-./run.sh            # exécution complète avec les valeurs par défaut
-./run.sh -h         # affiche l'aide
-```
-
-(Si `./run.sh` n'est pas exécutable : `bash run.sh`.)
-
-| Option | Rôle | Défaut |
-|---|---|---|
-| `-h` | affiche l'aide et quitte | |
-| `-i fichier` | matrice d'expression nettoyée en entrée de l'analyse | `data/processed/expression_clean.tsv` |
-| `-o dossier` | dossier des résultats | `results` |
-| `-l seuil` | seuil sur \|log2FC\| | `1` |
-| `-p seuil` | seuil sur la p-value ajustée (entre 0 et 1) | `0.05` |
-
-Exemple : `./run.sh -l 1.5 -p 0.01 -o results_strict`
-
-**Codes de retour :** `0` succès, `1` erreur d'exécution (fichier manquant, étape en échec…),
-`2` mauvais usage (option inconnue ou valeur invalide).
-`Ctrl+C` renvoie `130`, un signal TERM renvoie `143` ; les fichiers temporaires sont supprimés.
-
-**Durée :** quelques minutes (le téléchargement et la conversion du fichier Excel sont les étapes les plus longues).
-
-**Relance :** `run.sh` peut être relancé sans nettoyage manuel. Le fichier brut déjà présent n'est pas
-re-téléchargé (il est seulement revérifié), et un téléchargement interrompu est repris (`curl -C -`).
-
-### Étapes exécutées par `run.sh`
-
-| # | Étape | Script |
-|---|---|---|
-| 1 | Téléchargement + validation des fichiers GEO (XLSX et Series Matrix), SHA-256 | `scripts/01_download.sh` |
-| 2 | Conversion XLSX → TSV | `scripts/convert_data.sh` |
-| 3 | Nettoyage par tubes (`awk \| sed \| awk`) | `scripts/process_data.sh` |
-| 4 | Vérification des sommes SHA-256 | `scripts/checksums.sh` |
-| 5 | Extraction des métadonnées (groupes d'échantillons) | `scripts/03_metadata.sh` |
-| 6 | Analyse statistique (Welch + correction BH) | `scripts/analyse.py` |
-| 7 | Figures (boxplot, heatmap, volcano plot) | `scripts/visualisations.py` |
-| 8 | Tests automatiques (pytest) | `tests/test_analyse.py` |
-| 9 | Archivage daté des résultats (tar.gz) | `scripts/04_archive.sh` |
-
-## 3. Organisation du dépôt
-
-```
-.
-├── run.sh                  # point d'entrée unique
-├── requirements.txt        # environnement Python reproductible
-├── checksums.sha256        # somme SHA-256 de référence du fichier brut GEO
-├── SOURCES.md              # sources des données
-├── README.md
-├── data/
-│   ├── raw/                # données brutes téléchargées (lecture seule)
-│   └── processed/          # expression.tsv, expression_clean.tsv, metadata.tsv, SHA256SUMS
-├── scripts/                # scripts Shell (lib.sh = fonctions communes) et Python
-├── tests/                  # tests pytest
-├── results/                # résultats de l'analyse
-├── logs/                   # journaux horodatés
-└── cron/pipeline.cron      # tâche planifiée
-```
-
-Les données et les résultats ne sont pas versionnés dans Git : `run.sh` les génère.
-
-## 4. Fichiers produits
-
-| Fichier | Contenu |
-|---|---|
-| `data/raw/*.xlsx`, `*.txt.gz` (+ `.sha256`) | données brutes GEO, en lecture seule |
-| `data/processed/expression.tsv` | matrice convertie |
-| `data/processed/expression_clean.tsv` | matrice nettoyée |
-| `data/processed/metadata.tsv` | identifiant GSM, titre et groupe de chaque échantillon |
-| `data/processed/SHA256SUMS` | sommes des fichiers traités |
-| `results/all_results.csv` | tous les gènes : moyennes, log2FC, p-value, p ajustée BH |
-| `results/deg.csv` | gènes qui respectent le motif (seuils `-l` et `-p`) |
-| `results/summary.json` | nombre de gènes testés/significatifs, seuils, échantillons utilisés |
-| `results/boxplot.png`, `heatmap.png`, `volcano.png` | figures |
-| `results_AAAAMMJJ_HHMM.tar.gz` | archive datée du dossier de résultats (racine du dépôt) |
-| `logs/run_AAAAMMJJ_HHMMSS.log` | journal horodaté de chaque exécution |
-| `logs/process_data.log` | journal du nettoyage |
-
-## 5. Tests
-
-`run.sh` lance `pytest` automatiquement (étape 8). Pour les lancer seuls, après un `run.sh` :
+### Étape 1 — Téléchargement
 
 ```bash
-python3 -m pytest -q tests
+./scripts/01_download.sh
 ```
 
-Les tests vérifient les dimensions et l'absence de valeurs manquantes de la matrice, la présence des
-colonnes de `deg.csv`, le respect des seuils (lus dans `results/summary.json`) et la production des figures.
+Télécharge le fichier XLSX depuis GEO, vérifie sa structure et calcule son empreinte SHA-256.
 
-## 6. Tâche planifiée (cron)
-
-`cron/pipeline.cron` lance le pipeline chaque dimanche à 02h00. Le marqueur `__PROJECT_DIR__` est
-remplacé par le chemin du dépôt à l'installation :
+### Étape 2 — Conversion
 
 ```bash
-# Installer (ajoute la tâche aux tâches cron existantes de l'utilisateur)
-(crontab -l 2>/dev/null; sed "s|__PROJECT_DIR__|$PWD|g" cron/pipeline.cron) | crontab -
-
-# Vérifier
-crontab -l
-
-# Retirer la tâche : crontab -e puis supprimer les lignes du projet
+./scripts/convert_data.sh
 ```
 
-La sortie de cron est ajoutée à `logs/cron.log`. Le venv `.venv` doit exister (voir section 1).
+Convertit le fichier Excel en fichier TSV :
 
-## 7. Journaux et permissions
+`data/processed/expression.tsv`
 
-- Chaque exécution écrit un journal horodaté `logs/run_AAAAMMJJ_HHMMSS.log`.
-- Les scripts (`run.sh`, `scripts/*.sh`, `scripts/*.py`) sont exécutables et les données brutes sont
-  en lecture seule (`chmod 444`) : `run.sh` appelle `scripts/set_permissions.sh` à chaque lancement.
+### Étape 3 — Nettoyage
 
-## 8. Répartition du travail
+```bash
+./scripts/process_data.sh
+```
 
-| Membre | Rôle | Éléments |
-|---|---|---|
-| À compléter | Gestion des données, scripts Shell, bibliothèque de fonctions | `01_download.sh`, `convert_data.sh`, `process_data.sh`, `checksums.sh`, `lib.sh` |
-| À compléter | Script principal et administration système | `run.sh`, `03_metadata.sh`, `04_archive.sh`, cron, permissions |
-| À compléter | Analyse statistique Python | `analyse.py` |
-| À compléter | Visualisations et tests | `visualisations.py`, `tests/` |
-| À compléter | Rapport et documentation | `rapport.pdf`, `README.md`, `SOURCES.md` |
+Nettoie la matrice et produit :
 
-(Le détail du travail de gestion des données est dans `M2_HANDOFF.md`.)
+`data/processed/expression_clean.tsv`
+
+### Étape 4 — Vérification des sommes de contrôle
+
+```bash
+./scripts/checksums.sh
+```
+
+Vérifie l'intégrité des fichiers à l'aide de SHA-256.
+
+## 5. Journaux d'exécution
+
+Les journaux permettent de suivre les opérations effectuées et de faciliter l'identification des erreurs.
+
+Le script de nettoyage produit notamment :
+
+`logs/process_data.log`
+
+La mise en place d'un journal central horodaté pour l'exécution complète du pipeline sera intégrée avec le script principal.
+
+## 6. Planification automatique
+
+Le dossier `cron/` est réservé à la configuration de la planification automatique.
+
+La configuration définitive sera documentée après l'intégration du script principal `run.sh`.
+
+## 7. Résultats et intégrité des données
+
+qLes résultats intermédiaires sont stockés dans `data/processed/`.
+
+Les résultats finaux de l'analyse sont destinés au dossier `results/`.
+
+Les sommes SHA-256 permettent de vérifier que les fichiers n'ont pas été modifiés depuis le calcul de leurs empreintes de référence.
+
+## 8. Remarques
+
+- Exécuter les scripts depuis la racine du dépôt, sauf indication contraire.
+- Ne pas ajouter les données volumineuses au dépôt Git.
+- Conserver `requirements.txt` pour reproduire l'environnement Python.
+- Le pipeline complet sera lancé par `run.sh` après son intégration.
