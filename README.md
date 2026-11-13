@@ -242,6 +242,7 @@ Il n'est pas appelé automatiquement par `run.sh`.
 
 1. **Exécution des commandes :** Exécuter les commandes depuis la racine du dépôt.
 
+
 2. **Récupération du projet :** Le code source est disponible sur GitHub : [Projet Endométriose](https://github.com/HOUDA-HADDAD/-Enqu-te-sur-une-maladie-L-endom-triose-.git).
 
    Pour récupérer le projet :
@@ -249,12 +250,18 @@ Il n'est pas appelé automatiquement par `run.sh`.
    git clone https://github.com/HOUDA-HADDAD/-Enqu-te-sur-une-maladie-L-endom-triose-.git
    ```
 
+
 3. **Environnement Python :** Activer l'environnement virtuel Python avant de lancer le script `run.sh`.
+
 
 4. **Gestion des données :** Ne pas ajouter les fichiers de données volumineux au dépôt Git.
 
+
 5. **Dépendances :** Conserver le fichier `requirements.txt` afin de pouvoir reproduire l'environnement Python.
+
 
 6. **Sources :** Consulter le fichier `SOURCES.md` pour retrouver les références et les liens de téléchargement.
 
+
 7. **Exécution du pipeline :** Le pipeline complet est lancé à partir du script principal `run.sh`.
+
