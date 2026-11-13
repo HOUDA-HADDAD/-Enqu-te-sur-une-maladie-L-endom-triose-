@@ -242,19 +242,19 @@ Il n'est pas appelé automatiquement par `run.sh`.
 
 1. Exécuter les commandes depuis la racine du dépôt.
 
-2. **Dépôt GitHub :** [Projet Endométriose](https://github.com/HOUDA-HADDAD/-Enqu-te-sur-une-maladie-L-endom-triose-.git).
+2. Dépôt GitHub : [Projet Endométriose](https://github.com/HOUDA-HADDAD/-Enqu-te-sur-une-maladie-L-endom-triose-.git).
 
-   Pour récupérer le projet :
+3. Pour récupérer le projet :
    ```bash
    git clone https://github.com/HOUDA-HADDAD/-Enqu-te-sur-une-maladie-L-endom-triose-.git
    ```
 
-3. Activer l'environnement virtuel Python avant de lancer `run.sh`.
+4. Activer l'environnement virtuel Python avant de lancer `run.sh`.
 
-4. Ne pas ajouter les données volumineuses au dépôt Git.
+5. Ne pas ajouter les données volumineuses au dépôt Git.
 
-5. Conserver `requirements.txt` pour reproduire l'environnement Python.
+6. Conserver `requirements.txt` pour reproduire l'environnement Python.
 
-6. Consulter `SOURCES.md` pour les références et les liens de téléchargement.
+7. Consulter `SOURCES.md` pour les références et les liens de téléchargement.
 
-7. Le pipeline complet est lancé à partir du script principal `run.sh`.
+8. Le pipeline complet est lancé à partir du script principal `run.sh`.
