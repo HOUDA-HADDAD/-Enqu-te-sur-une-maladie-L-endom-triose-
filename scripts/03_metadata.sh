@@ -1,3 +1,4 @@
+
 #!/usr/bin/env bash
 set -euo pipefail
 # source scripts/lib.sh
@@ -12,19 +13,21 @@ if [ ! -f "$INPUT" ]; then
     exit 1
 fi
 
-# استخراج المعرفات والمجموعات
+# Extrait, pour chaque échantillon : identifiant GSM, titre (= nom de colonne
+# dans la matrice d'expression) et groupe (ligne "tissue: ...").
+# Le titre sert de clé de jointure avec la matrice : les colonnes du xlsx
+# ne sont pas dans le même ordre que les échantillons du fichier GEO.
 zcat "$INPUT" | awk -F'\t' '
-/^!Sample_geo_accession/ {
-    for (i=2; i<=NF; i++) { gsub(/"/, "", $i); ids[i-1] = $i }
-}
-/^!Sample_characteristics_ch1/ && (/ndometrio/ || /ontrol/ || /esion/ || /utopic/ || /ain/) {
+/^!Sample_geo_accession/ { for (i=2; i<=NF; i++) { gsub(/"/, "", $i); ids[i-1] = $i } }
+/^!Sample_title/         { for (i=2; i<=NF; i++) { gsub(/"/, "", $i); titles[i-1] = $i } }
+/^!Sample_characteristics_ch1/ && $2 ~ /tissue:/ {
     for (i=2; i<=NF; i++) { gsub(/"/, "", $i); groups[i-1] = $i }
 }
 END {
-    print "SampleID\tGroup"
+    print "SampleID\tTitle\tGroup"
     for (i=1; i<=length(ids); i++) {
         if (groups[i] != "") {
-            print ids[i] "\t" groups[i]
+            print ids[i] "\t" titles[i] "\t" groups[i]
         }
     }
 }' > "$OUTPUT"

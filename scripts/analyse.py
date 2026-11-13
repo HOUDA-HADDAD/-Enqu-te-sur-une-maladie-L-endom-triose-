@@ -20,12 +20,14 @@ def main():
     df_expr = pd.read_csv(args.input, sep='\t', index_col=0)
     df_meta = pd.read_csv(args.meta, sep='\t')
 
-    lesion_indices = [i for i, group in enumerate(df_meta['Group']) if 'endometrium' not in group.lower()]
-    control_indices = [i for i, group in enumerate(df_meta['Group']) if 'endometrium' in group.lower()]
-    expr_cols = df_expr.columns.tolist()
-
-    samples_lesion = [expr_cols[i+2] for i in lesion_indices if i+2 < len(expr_cols)]
-    samples_control = [expr_cols[i+2] for i in control_indices if i+2 < len(expr_cols)]
+    # Association par TITRE d'echantillon (= nom de colonne de la matrice) et non par
+    # position : les colonnes du xlsx ne sont pas dans l'ordre du fichier GEO.
+    # Controles = endometrium ; lesions = les groupes "lesion" et "endometrioma".
+    # Les echantillons "Peritoneum" (ni lesion ni endometre) sont exclus.
+    titre_vers_groupe = dict(zip(df_meta['Title'].str.strip(), df_meta['Group'].str.lower()))
+    samples_control = [c for c in df_expr.columns if 'endometrium' in titre_vers_groupe.get(c, '')]
+    samples_lesion = [c for c in df_expr.columns
+                      if 'lesion' in titre_vers_groupe.get(c, '') or 'endometrioma' in titre_vers_groupe.get(c, '')]
 
     print(f"Échantillons Lésion : {len(samples_lesion)}")
     print(f"Échantillons Contrôle : {len(samples_control)}")
