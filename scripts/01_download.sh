@@ -40,6 +40,8 @@ MATRIX_FILE="GSE141549-GPL13376_series_matrix.txt.gz"
 
 
 # Validation Excel
+
+# Validation Excel
 validate_excel() {
     python - "$1" <<'PY'
 import sys
@@ -48,16 +50,19 @@ from openpyxl import load_workbook
 workbook = None
 
 try:
-    workbook = load_workbook(
-        sys.argv[1],
-        read_only=True,
-        data_only=True
-    )
+    # Ouvrir le fichier comme un flux binaire :
+    # cela permet aussi de lire les fichiers temporaires .part
+    with open(sys.argv[1], "rb") as excel_file:
+        workbook = load_workbook(
+            excel_file,
+            read_only=True,
+            data_only=True
+        )
 
-    if "Illumina HumanWG-6 v2" not in workbook.sheetnames:
-        raise ValueError("Feuille principale introuvable")
+        if "Illumina HumanWG-6 v2" not in workbook.sheetnames:
+            raise ValueError("Feuille principale introuvable")
 
-    print("[INFO] Classeur Excel valide")
+        print("[INFO] Classeur Excel valide")
 
 except Exception as error:
     print(f"[ERREUR] Fichier Excel invalide : {error}",
